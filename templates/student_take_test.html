@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Take Test</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f4f6f9;
+        }
+        .list-group-item-dark-custom {
+            background-color: #343a40;
+            color: white;
+            border-color: #454d55;
+            transition: background-color 0.2s;
+        }
+        .list-group-item-dark-custom:hover {
+            background-color: #23272b;
+            color: #fff;
+            text-decoration: none;
+        }
+        .empty-state {
+            background-color: #343a40;
+            color: #adb5bd;
+            border: 1px solid #454d55;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="{{ url_for('student_home') }}">Student Panel</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{ url_for('student_take_test') }}">Take Test</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('student_view_score') }}">Check Scores</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('student_logout') }}">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h2 class="mb-4 text-dark">Available Tests</h2>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="list-group mt-3 shadow-sm">
+            {% if tests %}
+                {% for test in tests %}
+                    <a href="{{ url_for('student_take_test_questions', test_id=test.test_id) }}" class="list-group-item list-group-item-action list-group-item-dark-custom d-flex justify-content-between align-items-center">
+                        {{ test.test_name }}
+                        <span class="badge badge-primary badge-pill">Start &rarr;</span>
+                    </a>
+                {% endfor %}
+            {% else %}
+                <div class="alert empty-state mt-3 text-center py-4" role="alert">
+                    <h4>No tests available.</h4>
+                    <p class="mb-0">You have completed all assigned tests or none have been created yet.</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="mt-4">
+             <a href="{{ url_for('student_home') }}" class="btn btn-secondary">Back to Home</a>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

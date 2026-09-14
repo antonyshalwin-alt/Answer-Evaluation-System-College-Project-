@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View Tests</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .table-dark { background-color: #343a40; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Teacher Tests</h2>
+        <table class="table table-bordered table-dark mt-3">
+            <thead>
+                <tr>
+                    <th>Test ID</th>
+                    <th>Test Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if tests %}
+                    {% for test in tests %}
+                    <tr>
+                        <td>{{ test[0] }}</td>
+                        <td>{{ test[1] }}</td>
+                        <td>
+                            <a href="{{ url_for('view_teacher_test_questions', test_id=test[0]) }}" class="btn btn-info">View Questions</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr><td colspan="3" class="text-center">No tests found.</td></tr>
+                {% endif %}
+            </tbody>
+        </table>
+        <a href="{{ url_for('admin_teachers') }}" class="btn btn-primary">Back to Teachers List</a>
+    </div>
+</body>
+</html>

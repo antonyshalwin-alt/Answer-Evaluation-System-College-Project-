@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Test Questions</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .table-dark-glass {
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+        .card-glass-dark {
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .table td, .table th {
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            vertical-align: middle;
+        }
+        .table-scroll {
+            border-radius: .5rem;
+            max-height: 700px;
+            overflow-y: auto;
+        }
+        thead th {
+            position: sticky;
+            top: 0;
+            background-color: #343a40;
+            z-index: 10;
+        }
+        .overflow-x-auto {
+            overflow-x: auto;
+        }
+        .overflow-x-auto::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="{{ url_for('teacher_home') }}">Teacher Panel</a>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('teacher_home') }}">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('teacher_profile') }}">Profile</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('teacher_logout') }}">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h2 class="mb-4">Manage Test Questions</h2>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <section class="intro">
+            <div class="card shadow-2-strong" style="background: transparent;">
+                <div class="card-body p-0">
+                    <div class="table-responsive table-scroll">
+                        <table class="table table-bordered table-dark-glass mt-3">
+                            <thead>
+                                <tr>
+                                    <th style="width: 5%;">Q.No</th>
+                                    <th style="width: 40%;">Question Text</th>
+                                    <th style="width: 35%;">Expected Answer(s)</th>
+                                    <th style="width: 10%;">Marks</th>
+                                    <th style="width: 10%;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if questions %}
+                                    {% for question in questions %}
+                                    <tr>
+                                        <td>{{ question[1] if question[1] else loop.index }}</td>
+
+                                        <td title="{{ question[2] }}">{{ question[2] }}</td>
+
+                                        <td>
+                                            <div class="overflow-x-auto">
+                                                <ul class="list-unstyled mb-0">
+                                                    {% for answer in question_answers[question[0]] %}
+                                                        <li>- {{ answer[1] }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        </td>
+
+                                        <td>{{ question[4] }}</td>
+
+                                        <td>
+                                            <form method="POST" action="{{ url_for('view_teacher_test_questions', test_id=teacher_id) }}">
+                                                <input type="hidden" name="question_id" value="{{ question[0] }}">
+                                                <button type="submit" name="delete_question" class="btn btn-danger btn-sm" onclick="return confirm('Delete this question?');">Delete</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr><td colspan="5" class="text-center">No questions available. Upload an Excel file below.</td></tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="card card-glass-dark">
+            <h3>Upload Questions (Excel)</h3>
+            <p class="small text-white-50">
+                <strong>Required Columns:</strong> <code>S.No</code>, <code>Question</code>, <code>Answer</code>, <code>Marks</code>.<br>
+                Ensure the first row contains these exact headers.
+            </p>
+
+            <form method="POST" action="{{ url_for('view_teacher_test_questions', test_id=teacher_id) }}" enctype="multipart/form-data">
+                <div class="input-group mb-3">
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="excelFile" name="file" accept=".xlsx" required>
+                        <label class="custom-file-label" for="excelFile">Choose Excel file...</label>
+                    </div>
+                </div>
+                <button type="submit" name="upload_file" class="btn btn-info">Upload Excel</button>
+                <a href="{{ url_for('download_sample_excel') }}" class="btn btn-outline-light float-right btn-sm">Download Template</a>
+            </form>
+        </div>
+
+        <div class="mb-5">
+            <a href="{{ url_for('teacher_home') }}" class="btn btn-primary">Back to Test List</a>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $('.custom-file-input').on('change', function() {
+            let fileName = $(this).val().split('\\').pop();
+            $(this).next('.custom-file-label').addClass("selected").html(fileName);
+        });
+    </script>
+</body>
+</html>

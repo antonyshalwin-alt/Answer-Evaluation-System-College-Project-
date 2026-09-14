@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View Test Questions (Read-Only)</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .table-dark { background-color: #343a40; color: white; }
+        .table td, .table th { vertical-align: middle; }
+    </style>
+</head>
+<body>
+
+    <div class="container mt-5">
+        <h2>Test Questions (Admin View)</h2>
+        <table class="table table-bordered table-dark mt-3">
+            <thead>
+                <tr>
+                    <th style="width: 10%;">Q.No</th>
+                    <th style="width: 45%;">Question Text</th>
+                    <th style="width: 35%;">Expected Answer(s)</th>
+                    <th style="width: 10%;">Marks</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if questions %}
+                    {% for question in questions %}
+                    <tr>
+                        <td>{{ question[1] if question[1] else loop.index }}</td>
+                        <td>{{ question[2] }}</td>
+                        <td>
+                            <ul class="list-unstyled mb-0">
+                                {% for answer in question_answers[question[0]] %}
+                                <li>- {{ answer[1] }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                        <td>{{ question[4] }}</td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr><td colspan="4" class="text-center">No questions found.</td></tr>
+                {% endif %}
+            </tbody>
+        </table>
+
+        <a href="{{ url_for('view_teacher_tests', teacher_id=teacher_id) }}" class="btn btn-primary">Back to Tests</a>
+    </div>
+
+</body>
+</html>

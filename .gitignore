@@ -1,0 +1,16 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+# Editor-based HTTP Client requests
+/httpRequests/
+.idea/
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+uploads/*
+!uploads/.gitkeep
+
+.env
+*.log

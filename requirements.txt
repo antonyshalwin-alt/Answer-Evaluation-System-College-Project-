@@ -1,0 +1,7 @@
+flask
+flask-mysqldb
+nltk sentence-transformers
+scikit-learn
+numpy
+pandas
+pandas openpyxl
